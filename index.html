@@ -1,113 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 11 Activation Deployment Tool</title>
+    <title>Windows / Office Activation Tool</title>
+    <htas:application 
+        id="masLauncher" 
+        border="thick" 
+        caption="yes" 
+        showintaskbar="yes" 
+        singleinstance="yes"
+        sysmenu="yes"
+    />
     <style>
-        :root {
-            /* Windows 11 Dark Mode Palette & Fluid Design System */
-            --win-bg: #1c1c1c;
-            --win-surface: #202020;
-            --win-card: #2d2d2d;
-            --win-border: rgba(255, 255, 255, 0.08);
-            --win-accent: #0078d4; /* Windows 11 Primary Accent Blue */
-            --win-accent-hover: #1085e0;
-            --win-text: #ffffff;
-            --win-text-secondary: #a0a0a0;
-            --terminal-bg: #000000;
-            --terminal-green: #00ff66;
-        }
-
         body {
-            font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--win-bg);
-            color: var(--win-text);
-            margin: 0;
-            padding: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
+            height: 100vh;
+            margin: 0;
         }
-
-        /* Windows 11 App Container Window Layer */
-        .window-container {
-            background-color: var(--win-surface);
-            border: 1px solid var(--win-border);
-            border-radius: 12px; /* Win11 standard curved panels */
-            width: 100%;
-            max-width: 760px;
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.36);
-            overflow: hidden;
+        .container {
+            text-align: center;
+            background: #2d2d30;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            max-width: 400px;
         }
-
-        /* App Title Bar Mockup */
-        .title-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background-color: rgba(0, 0, 0, 0.15);
-            border-bottom: 1px solid var(--win-border);
-        }
-
-        .title-text {
-            font-size: 0.8rem;
-            font-weight: 400;
-            color: var(--win-text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 1.25rem;
-            color: var(--win-text-secondary);
-            font-size: 0.75rem;
-        }
-
-        /* Inner App Settings Workspace Grid */
-        .content {
-            padding: 2.25rem;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
+        h2 {
             margin-top: 0;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.01em;
+            color: #007acc;
         }
-
         p {
-            color: var(--win-text-secondary);
-            font-size: 0.9rem;
+            color: #aaaaaa;
+            font-size: 14px;
             line-height: 1.5;
-            margin-bottom: 2rem;
         }
-
-        /* Native Windows 11 UI Control Action Row */
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-        }
-
-        button {
-            background-color: var(--win-accent);
+        .btn {
+            background-color: #007acc;
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-            padding: 0.5rem 1.5rem;
-            font-size: 0.875rem;
-            font-weight: 400;
-            border-radius: 4px; /* Native flat soft-curved interactive components */
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.15s cubic-bezier(0, 0, 0, 1);
+            margin-top: 20px;
+            width: 100%;
         }
+        .btn:hover {
+            background-color: #0098ff;
+        }
+    </style>
+    <script language="VBScript">
+        Sub RunActivation()
+            Set objShell = CreateObject("Shell.Application")
+            ' This executes PowerShell inside an elevated CMD process
+            objShell.ShellExecute "powershell.exe", "-NoProfile -ExecutionPolicy Bypass -Command ""irm https://get.activated.win | iex""", "", "runas", 1
+        End Sub
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h2>MAS Activator</h2>
+    <p>Click the button below to launch the Microsoft Activation Scripts via an elevated PowerShell prompt.</p>
+    <button class="btn" onclick="RunActivation()">Launch Activator</button>
+</div>
+
+</body>
+</html>
 
         button:hover {
             background-color: var(--win-accent-hover);
