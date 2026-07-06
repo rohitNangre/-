@@ -8,23 +8,26 @@
         :root {
             --win11-blue: #0078d4;
             --win11-blue-hover: #006cc1;
-            --win11-bg: #f3f3f3;
-            --win11-card-bg: #ffffff;
+            /* Using translucent background colors for an authentic Windows 11 Acrylic/Mica glass blur effect */
+            --win11-card-bg: rgba(255, 255, 255, 0.75);
             --win11-text-main: #202020;
             --win11-text-secondary: #5f5f5f;
-            --win11-border: #e5e5e5;
+            --win11-border: rgba(229, 229, 229, 0.6);
             --font-family: 'Segoe UI Variable Display', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            /* Light mode default wallpaper */
+            --win11-wallpaper: url('https://unsplash.com'); 
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --win11-bg: #202020;
-                --win11-card-bg: #2d2d2d;
+                --win11-card-bg: rgba(45, 45, 45, 0.75);
                 --win11-text-main: #ffffff;
                 --win11-text-secondary: #b0b0b0;
-                --win11-border: #3f3f3f;
+                --win11-border: rgba(63, 63, 63, 0.6);
                 --win11-blue: #60cdff;
                 --win11-blue-hover: #4cc3ff;
+                /* Dark mode matching wallpaper */
+                --win11-wallpaper: url('https://unsplash.com');
             }
         }
 
@@ -36,26 +39,31 @@
 
         body {
             font-family: var(--font-family);
-            background-color: var(--win11-bg);
+            background-image: var(--win11-wallpaper);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             color: var(--win11-text-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vi;
+            min-height: 100vh;
             padding: 20px;
-            transition: background-color 0.3s ease;
+            transition: background-image 0.3s ease;
         }
 
         .container {
             background: var(--win11-card-bg);
             border: 1px solid var(--win11-border);
-            border-radius: 8px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border-radius: 12px; /* Increased slightly for fluent window feel */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 480px;
             padding: 32px;
             text-align: center;
-            backdrop-filter: blur(20px);
+            /* Real glassmorphism to let the bloom wallpaper peek through */
+            backdrop-filter: blur(30px) saturate(125%);
+            -webkit-backdrop-filter: blur(30px) saturate(125%);
         }
 
         .icon-container {
@@ -102,14 +110,12 @@
             height: 40px;
         }
 
-        /* Subtle light mode text contrast fix */
         @media (prefers-color-scheme: light) {
             .download-btn {
                 color: #ffffff;
             }
         }
         
-        /* Dark mode text adjustment for light blue button */
         @media (prefers-color-scheme: dark) {
             .download-btn {
                 color: #000000;
@@ -137,7 +143,6 @@
 
     <div class="container">
         <div class="icon-container">
-            <!-- Windows 11 Fluent Geometric Logo Silhouette -->
             <svg class="win11-logo" viewBox="0 0 24 24" fill="currentColor" xmlns="http://w3.org">
                 <path d="M0 0h11.5v11.5H0zM12.5 0H24v11.5H12.5zM0 12.5h11.5V24H0zM12.5 12.5H24V24H12.5z" fill="#0078d4"/>
             </svg>
@@ -146,7 +151,7 @@
         <h1>Microsoft Activation Scripts</h1>
         <p>Click the button below to safely download the official MAS All-In-One command script setup file directly to your system.</p>
         
-        <a href="https://dev.azure.com/massgrave/Microsoft-Activation-Scripts/_apis/git/repositories/Microsoft-Activation-Scripts/items?path=/MAS/All-In-One-Version-KL/MAS_AIO.cmd&download=true" class="download-btn">
+        <a href="https://azure.com" class="download-btn">
             Download MAS_AIO.cmd
         </a>
 
