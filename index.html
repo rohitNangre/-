@@ -3,162 +3,622 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 11 Download Center</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=M9BRw0RJZXKi&format=png&color=000000">
+    <title>Windows 11 Cloud OS Platform</title>
     <style>
         :root {
-            --win11-blue: #0078d4;
-            --win11-blue-hover: #006cc1;
-            /* Using translucent background colors for an authentic Windows 11 Acrylic/Mica glass blur effect */
-            --win11-card-bg: rgba(255, 255, 255, 0.75);
-            --win11-text-main: #202020;
-            --win11-text-secondary: #5f5f5f;
-            --win11-border: rgba(229, 229, 229, 0.6);
-            --font-family: 'Segoe UI Variable Display', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-            /* Light mode default wallpaper */
-            --win11-wallpaper: url('https://unsplash.com'); 
+            --bg-url: radial-gradient(circle at 50% 50%, #ffffff 0%, #eceff1 40%, #cfd8dc 70%, #90a4ae 100%);
+            --taskbar-bg: rgba(243, 243, 243, 0.85);
+            --window-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #000000;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --accent-color: #0078d4;
+            --start-bg: rgba(243, 243, 243, 0.95);
+            --bh-core: #102a43;
+            --bh-glow: 0 0 60px 20px rgba(16, 42, 67, 0.3);
+            --ring-color: rgba(16, 42, 67, 0.15);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --win11-card-bg: rgba(45, 45, 45, 0.75);
-                --win11-text-main: #ffffff;
-                --win11-text-secondary: #b0b0b0;
-                --win11-border: rgba(63, 63, 63, 0.6);
-                --win11-blue: #60cdff;
-                --win11-blue-hover: #4cc3ff;
-                /* Dark mode matching wallpaper */
-                --win11-wallpaper: url('https://unsplash.com');
-            }
+        [data-theme="dark"] {
+            --bg-url: radial-gradient(circle at 50% 50%, #000000 0%, #050814 40%, #010103 70%, #000000 100%);
+            --taskbar-bg: rgba(15, 15, 15, 0.85);
+            --window-bg: rgba(28, 28, 30, 0.9);
+            --text-color: #ffffff;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-color: #29b6f6;
+            --start-bg: rgba(20, 20, 20, 0.95);
+            --bh-core: #000000;
+            --bh-glow: 0 0 50px 15px rgba(255, 255, 255, 0.35), 0 0 100px 45px rgba(122, 62, 242, 0.2);
+            --ring-color: rgba(255, 255, 255, 0.2);
         }
 
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            box-sizing: border-box; margin: 0; padding: 0; user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        body {
-            font-family: var(--font-family);
-            background-image: var(--win11-wallpaper);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: var(--win11-text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            transition: background-image 0.3s ease;
+        body, html {
+            width: 100%; height: 100%; overflow: hidden;
+            background: var(--bg-url);
+            transition: background 0.5s ease;
+            position: relative;
         }
 
-        .container {
-            background: var(--win11-card-bg);
-            border: 1px solid var(--win11-border);
-            border-radius: 12px; /* Increased slightly for fluent window feel */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            width: 100%;
-            max-width: 480px;
-            padding: 32px;
-            text-align: center;
-            /* Real glassmorphism to let the bloom wallpaper peek through */
-            backdrop-filter: blur(30px) saturate(125%);
-            -webkit-backdrop-filter: blur(30px) saturate(125%);
+        #gravity-canvas {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            z-index: 1; pointer-events: none;
         }
 
-        .icon-container {
-            margin-bottom: 24px;
+        .black-hole-visual {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); width: 150px; height: 150px;
+            background: var(--bh-core); border-radius: 50%;
+            box-shadow: var(--bh-glow); z-index: 2; pointer-events: none;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
+        }
+        .black-hole-visual::before {
+            content: ''; position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px;
+            border: 2px dashed var(--ring-color); border-radius: 50%;
+            animation: spinRing 25s linear infinite;
+        }
+        .black-hole-visual::after {
+            content: ''; position: absolute; top: -45px; left: -45px; right: -45px; bottom: -45px;
+            border: 1px solid var(--ring-color); opacity: 0.6; border-radius: 50%;
+            animation: spinRing 40s linear infinite reverse;
+        }
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
+
+        #desktop {
+            width: 100%; height: calc(100% - 48px); position: relative;
+            padding: 20px; display: flex; flex-direction: column; gap: 20px;
+            align-content: flex-start; flex-wrap: wrap; z-index: 5;
         }
 
-        .win11-logo {
-            width: 64px;
-            height: 64px;
+        .desktop-icon {
+            width: 80px; height: 85px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            color: var(--text-color); cursor: pointer;
+            border-radius: 6px; border: 1px solid transparent; font-size: 11px;
+            transition: background 0.2s; z-index: 6;
+        }
+        [data-theme="dark"] .desktop-icon { text-shadow: 0 0 4px #000; color: #fff; }
+        .desktop-icon:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255,255,255,0.15); }
+        .desktop-icon svg, .desktop-icon img, .desktop-icon .app-avatar { width: 40px; height: 40px; margin-bottom: 5px; object-fit: contain;}
+
+        .app-avatar {
+            border-radius: 8px; display: flex; align-items: center;
+            justify-content: center; color: white; font-weight: bold; font-size: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
+        #taskbar {
+            width: 100%; height: 48px; background: var(--taskbar-bg); backdrop-filter: blur(20px);
+            position: absolute; bottom: 0; left: 0; display: flex; align-items: center;
+            justify-content: space-between; padding: 0 15px; border-top: 1px solid var(--border-color); z-index: 9999;
         }
-
-        p {
-            font-size: 14px;
-            color: var(--win11-text-secondary);
-            margin-bottom: 32px;
-            line-height: 1.5;
+        .taskbar-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+        .taskbar-icon {
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 4px; cursor: pointer; position: relative;
         }
+        .taskbar-icon:hover { background: rgba(255, 255, 255, 0.15); }
+        .taskbar-icon svg, .taskbar-icon img, .taskbar-icon .app-avatar { width: 26px; height: 26px; object-fit: contain; }
 
-        .download-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background-color: var(--win11-blue);
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            padding: 8px 32px;
-            font-size: 14px;
-            font-weight: 600;
-            font-family: var(--font-family);
-            text-decoration: none;
-            cursor: pointer;
-            transition: background-color 0.15s ease, transform 0.1s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            height: 40px;
+        .window {
+            position: absolute; width: 780px; height: 520px; background: var(--window-bg);
+            backdrop-filter: blur(15px); border: 1px solid var(--border-color); border-radius: 8px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: none; flex-direction: column; overflow: hidden; z-index: 10;
+            min-width: 350px; min-height: 250px;
         }
+        .window-header {
+            padding: 12px 15px; background: rgba(0, 0, 0, 0.03); display: flex;
+            justify-content: space-between; align-items: center; cursor: move;
+            color: var(--text-color); font-weight: 500; font-size: 13px;
+        }
+        .control-btn { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; margin-left: 5px;}
+        .btn-close { background: #ff5f56; } .btn-min { background: #ffbd2e; } .btn-max { background: #27c93f; }
 
-        @media (prefers-color-scheme: light) {
-            .download-btn {
-                color: #ffffff;
-            }
+        .window-content { flex: 1; height: 100%; color: var(--text-color); overflow: auto; position: relative; display: flex; flex-direction: column;}
+        iframe { width: 100%; flex: 1; border: none; display: block; background: #fff; }
+        .resize-handle { position: absolute; width: 15px; height: 15px; right: 0; bottom: 0; cursor: se-resize; z-index: 1000; }
+
+        .dev-container { display: flex; flex-direction: column; gap: 12px; padding: 20px; }
+        .dev-input { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: rgba(0,0,0,0.05); color: var(--text-color); outline: none; font-size: 13px;}
+        [data-theme="dark"] .dev-input { background: rgba(255,255,255,0.05); }
+        .dev-btn { padding: 10px 18px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;}
+        .dev-btn:hover { opacity: 0.9; }
+
+        .browser-navbar { display: flex; gap: 8px; padding: 8px; background: rgba(0,0,0,0.04); border-bottom: 1px solid var(--border-color); align-items: center;}
+        .browser-url-bar { flex: 1; padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--window-bg); color: var(--text-color); font-size: 12px; outline: none; }
+
+        #start-menu {
+            position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%) translateY(120%);
+            width: 520px; height: 500px; background: var(--start-bg); backdrop-filter: blur(25px);
+            border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1); padding: 25px; z-index: 9998;
+        }
+        #start-menu.open { transform: translateX(-50%) translateY(0); }
+        .apps-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 15px; }
+        .app-item { display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--text-color); font-size: 11px; cursor: pointer; padding: 10px 5px; border-radius: 6px; }
+        .app-item:hover { background: rgba(255,255,255,0.1); }
+        .app-item svg, .app-item img, .app-item .app-avatar { width: 32px; height: 32px; margin-bottom: 6px; font-size: 14px; object-fit: contain;}
+
+        #system-tray { color: var(--text-color); font-size: 11px; text-align: right; }
+
+        /* =========================================================================
+           MOBILE EMULATOR STYLES
+           ========================================================================= */
+        .emulator-wrapper {
+            display: flex; justify-content: center; align-items: center; background: #222; height: 100%; padding: 10px;
         }
         
-        @media (prefers-color-scheme: dark) {
-            .download-btn {
-                color: #000000;
-            }
+        /* Android Shell */
+        .android-device {
+            width: 320px; height: 95%; background: #000; border: 12px solid #333; border-radius: 36px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; position: relative;
+        }
+        .android-status-bar {
+            height: 24px; background: #111; color: #fff; display: flex; justify-content: space-between;
+            align-items: center; padding: 0 15px; font-size: 11px; font-family: sans-serif;
+        }
+        .android-nav-bar {
+            height: 40px; background: #111; display: flex; justify-content: space-around; align-items: center;
+        }
+        .android-nav-btn {
+            width: 16px; height: 16px; border: 2px solid #aaa; border-radius: 2px; cursor: pointer;
+        }
+        .android-nav-btn.circle { border-radius: 50%; }
+        .android-nav-btn.triangle {
+            width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+            border-right: 10px solid #aaa; border-left: 0; background: transparent;
         }
 
-        .download-btn:hover {
-            background-color: var(--win11-blue-hover);
+        /* iOS Shell */
+        .ios-device {
+            width: 320px; height: 95%; background: #000; border: 12px solid #1a1a1a; border-radius: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
-
-        .download-btn:active {
-            transform: scale(0.98);
+        .ios-header {
+            height: 30px; background: #000; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; color: #fff; font-size: 11px; font-weight: 600; font-family: -apple-system, sans-serif;
         }
-
-        .file-info {
-            margin-top: 24px;
-            font-size: 12px;
-            color: var(--win11-text-secondary);
-            border-top: 1px solid var(--win11-border);
-            padding-top: 16px;
+        .dynamic-island {
+            width: 90px; height: 18px; background: #000; border-radius: 10px; position: absolute; left: 50%; transform: translateX(-50%); top: 5px; z-index: 20;
+        }
+        .ios-home-indicator-bar {
+            height: 15px; background: #000; display: flex; justify-content: center; align-items: center;
+        }
+        .ios-home-line {
+            width: 110px; height: 4px; background: #fff; border-radius: 2px; opacity: 0.8;
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
-    <div class="container">
-        <div class="icon-container">
-            <svg class="win11-logo" viewBox="0 0 24 24" fill="currentColor" xmlns="http://w3.org">
-                <path d="M0 0h11.5v11.5H0zM12.5 0H24v11.5H12.5zM0 12.5h11.5V24H0zM12.5 12.5H24V24H12.5z" fill="#0078d4"/>
-            </svg>
+    <canvas id="gravity-canvas"></canvas>
+    <div class="black-hole-visual"></div>
+
+    <div id="desktop">
+        <div class="desktop-icon" onclick="openWindow('browser')">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 44c11.046 0 20-8.954 20-20S35.046 4 24 4 4 12.954 4 24s8.954 20 20 20z" fill="#4caf50"/><path d="M24 14c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10-4.477-10-10-10z" fill="#fff"/><path d="M24 18c-3.314 0-6 2.686-6 6s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6z" fill="#2196f3"/></svg>
+            <span>Web Browser</span>
         </div>
-        
-        <h1>Microsoft Activation Scripts</h1>
-        <p>Click the button below to safely download the official MAS All-In-One command script setup file directly to your system.</p>
-        
-        <a href="https://azure.com" class="download-btn">
-            Download MAS_AIO.cmd
-        </a>
 
-        <div class="file-info">
-            Verified Source: Azure DevOps (massgrave)
+        <div class="desktop-icon" onclick="openWindow('settings')">
+            <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="6" fill="#607D8B"/><path d="M24 2v4M24 42v4M2 24h4M42 24h4" stroke="#607D8B" stroke-width="4" stroke-linecap="round"/></svg>
+            <span>Settings</span>
+        </div>
+
+        <div class="desktop-icon" id="admin-launcher-icon" style="display: none;" onclick="openWindow('cloudmanager')">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M30 14.28a12 12 0 1 0-11.83 11.4h12.5a10 10 0 1 0-.67-20z" fill="#00bcd4"/><rect x="20" y="24" width="22" height="18" rx="3" fill="#2196f3"/></svg>
+            <span>Cloud Admin</span>
+        </div>
+
+        <div id="sys-desktop-icons" style="display:contents;"></div>
+    </div>
+
+    <div id="start-menu">
+        <div style="color: var(--text-color); font-size: 12px; font-weight:600; display:flex; justify-content:space-between; align-items: center;">
+            <span>Pinned Systems</span>
+            <span id="user-badge" style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 12px; font-size: 10px;">Guest Workspace</span>
+        </div>
+        <div class="apps-grid" id="start-apps-grid"></div>
+    </div>
+
+    <div id="win-settings" class="window" style="top: 25%; left: 35%; height:320px; width:450px;">
+        <div class="window-header"><span>Settings</span><div class="window-controls"><button class="control-btn btn-close" onclick="closeWindow('settings')"></button></div></div>
+        <div class="window-content dev-container">
+            <label style="font-weight:600; font-size: 13px;">Workspace Access Privilege Level</label>
+            <input type="password" id="admin-auth-pass" class="dev-input" placeholder="Type password structural key: admin123">
+            <button class="dev-btn" onclick="authenticateAdmin()">Elevate to Admin</button>
+            <hr style="border:0; border-top:1px solid var(--border-color); margin: 5px 0;">
+            <div style="display:flex; gap: 10px;">
+                <button class="dev-btn" onclick="setTheme('light')" style="background:#e0e0e0; color:#000; flex:1;">Light 3D Hole</button>
+                <button class="dev-btn" onclick="setTheme('dark')" style="background:#1e1e1e; color:#fff; flex:1;">Dark 3D Hole</button>
+            </div>
         </div>
     </div>
 
+    <div id="win-cloudmanager" class="window" style="top: 10%; left: 15%; width: 750px; height: 570px;">
+        <div class="window-header"><span>Cloud Repository Snippet Compiler</span><div class="window-controls"><button class="control-btn btn-close" onclick="closeWindow('cloudmanager')"></button></div></div>
+        <div class="window-content dev-container">
+            <h3>Generate Code Configuration Snippet</h3>
+            <p style="font-size:12px; color:var(--accent-color); margin-top:-5px;">Create ready-to-paste configurations instantly to update your permanent GitHub code array list.</p>
+            
+            <input type="text" id="panel-app-name" class="dev-input" placeholder="Application Title Name (e.g., WhatsApp)">
+            <input type="url" id="panel-app-url" class="dev-input" placeholder="Live Target Link (e.g., https://web.whatsapp.com)">
+            <input type="url" id="panel-app-icon" class="dev-input" placeholder="Custom Icon Link (Optional - Leave blank to auto-fetch Favicon)">
+            
+            <button class="dev-btn" onclick="generateConfigSnippetForGitHub()">Compile Deployment Snippet</button>
+            
+            <textarea id="output-config-log" style="flex:1; border:1px solid var(--border-color); border-radius:6px; padding:10px; background:rgba(0,0,0,0.2); color:var(--text-color); font-family:monospace; font-size:11px; resize:none; outline:none;" readonly placeholder="Your array deployment block output code will be generated here..."></textarea>
+        </div>
+    </div>
+
+    <div id="win-browser" class="window" style="top: 6%; left: 10%; width: 880px; height: 600px;">
+        <div class="window-header"><span>Core Engine Web Browser</span><div class="window-controls"><button class="control-btn btn-close" onclick="closeWindow('browser')"></button></div></div>
+        <div class="window-content">
+            <div class="browser-navbar">
+                <button class="dev-btn" style="padding: 5px 14px; font-size:11px;" onclick="navigateBrowserFrame()">Search</button>
+                <input type="text" id="browser-url-bar-field" class="browser-url-bar" value="https://www.google.com/search?igu=1" placeholder="Type a URL or search query to browse...">
+            </div>
+            <iframe id="native-browser-viewport" src="https://www.google.com/search?igu=1" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
+        </div>
+    </div>
+
+    <div id="win-android" class="window" style="top: 5%; left: 25%; width: 380px; height: 620px;">
+        <div class="window-header"><span>Android Mobile Emulator</span><div class="window-controls"><button class="control-btn btn-close" onclick="closeWindow('android')"></button></div></div>
+        <div class="window-content" style="padding:0;">
+            <div class="emulator-wrapper">
+                <div class="android-device">
+                    <div class="android-status-bar"><span>8:30 PM</span><span>▲ 5G 🔋 100%</span></div>
+                    <iframe id="android-viewport" src="https://www.google.com/search?igu=1" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
+                    <div class="android-nav-bar">
+                        <div class="android-nav-btn triangle" onclick="document.getElementById('android-viewport').src='https://www.google.com/search?igu=1'"></div>
+                        <div class="android-nav-btn circle" onclick="document.getElementById('android-viewport').src='https://www.google.com/search?igu=1'"></div>
+                        <div class="android-nav-btn" onclick="alert('Android Recents Stack Cleared')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-ios" class="window" style="top: 5%; left: 55%; width: 380px; height: 620px;">
+        <div class="window-header"><span>iOS Mobile Emulator</span><div class="window-controls"><button class="control-btn btn-close" onclick="closeWindow('ios')"></button></div></div>
+        <div class="window-content" style="padding:0;">
+            <div class="emulator-wrapper">
+                <div class="ios-device">
+                    <div class="dynamic-island"></div>
+                    <div class="ios-header"><span>8:30</span><span>📶 🛜 🔋</span></div>
+                    <iframe id="ios-viewport" src="https://www.google.com/search?igu=1" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
+                    <div class="ios-home-indicator-bar" onclick="document.getElementById('ios-viewport').src='https://www.google.com/search?igu=1'">
+                        <div class="ios-home-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-windows-container"></div>
+
+    <div id="taskbar">
+        <div></div>
+        <div class="taskbar-center" id="taskbar-shelf">
+            <div class="taskbar-icon" title="Start Menu" onclick="toggleStart()">
+                <svg viewBox="0 0 24 24"><path d="M0 0h11.3v11.3H0V0zm12.7 0H24v11.3H12.7V0zM0 12.7h11.3V24H0V12.7zm12.7 0H24V24H12.7V12.7z" fill="#0078d4"/></svg>
+            </div>
+          
+        </div>
+        <div id="system-tray">
+            <div id="time">00:00 AM</div><div id="date">01/01/2026</div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // MANUAL DEPLOYMENT ARRAY DICTIONARY (Paste Generated Snippets Directly Here)
+        // =========================================================================
+        const PREINSTALLED_CLOUD_APPS = [
+            {
+                id: "cloud_office",
+                title: "Office Deployment Hub",
+                url: "https://rohitnangre.github.io/propiactivate/",
+                icon: "https://img.icons8.com/?size=100&id=22989&format=png&color=000000"
+            },
+        ];
+
+        // =========================================================================
+        // MOUSE-REACT STARFIELD PHYSICS CANVAS ENGINE
+        // =========================================================================
+        const canvas = document.getElementById('gravity-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let mouse = { x: 0, y: 0, radius: 180 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class BackgroundStar {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 2 + 0.5;
+                this.color = document.body.getAttribute('data-theme') === 'light' ? 'rgba(16,42,67,0.4)' : 'rgba(255,255,255,1)';
+                this.isFalling = false;
+                this.vx = 0;
+                this.vy = 0;
+            }
+            update() {
+                const bhX = canvas.width / 2;
+                const bhY = canvas.height / 2;
+
+                const dxMouse = mouse.x - this.x;
+                const dyMouse = mouse.y - this.y;
+                const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+                if (distMouse < mouse.radius) {
+                    this.isFalling = true;
+                }
+
+                if (this.isFalling) {
+                    const dxHole = bhX - this.x;
+                    const dyHole = bhY - this.y;
+                    const distHole = Math.sqrt(dxHole * dxHole + dyHole * dyHole);
+
+                    if (distHole < 30) {
+                        this.init();
+                        return;
+                    }
+
+                    const force = 12 / (distHole + 10);
+                    this.vx += (dxHole / distHole) * force + (dyHole / distHole) * 0.15;
+                    this.vy += (dyHole / distHole) * force - (dxHole / distHole) * 0.15;
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    this.vx *= 0.94;
+                    this.vy *= 0.94;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                if (document.body.getAttribute('data-theme') === 'dark') {
+                    ctx.shadowBlur = 4;
+                    ctx.shadowColor = '#ffffff';
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+                ctx.fill();
+            }
+        }
+
+        function buildStarfield() {
+            stars = [];
+            for(let i=0; i<150; i++) stars.push(new BackgroundStar());
+        }
+        buildStarfield();
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX; mouse.y = e.clientY;
+        });
+
+        function animateEnvironment() {
+            ctx.shadowBlur = 0;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animateEnvironment);
+        }
+        animateEnvironment();
+
+        // =========================================================================
+        // CORE WINDOW MANIPULATION ENGINE
+        // =========================================================================
+        function openWindow(id) {
+            const win = document.getElementById(`win-${id}`);
+            if(win) { win.style.display = 'flex'; bringToFront(win); }
+        }
+
+        function closeWindow(id) {
+            const win = document.getElementById(`win-${id}`);
+            if(win) win.style.display = 'none';
+        }
+
+        function bringToFront(windowEl) {
+            document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
+            windowEl.style.zIndex = 100;
+        }
+
+        function registerWindowEvents(win) {
+            const header = win.querySelector('.window-header');
+            const handle = win.querySelector('.resize-handle');
+
+            header.onmousedown = function(e) {
+                if (e.target.classList.contains('control-btn')) return;
+                bringToFront(win);
+                document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = 'none');
+                let shiftX = e.clientX - win.getBoundingClientRect().left;
+                let shiftY = e.clientY - win.getBoundingClientRect().top;
+                
+                document.addEventListener('mousemove', onMouseMove);
+                function onMouseMove(e) {
+                    win.style.left = e.clientX - shiftX + 'px';
+                    win.style.top = e.clientY - shiftY + 'px';
+                }
+                
+                document.onmouseup = function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = 'auto');
+                    document.onmouseup = null;
+                };
+            };
+
+            if (handle) {
+                handle.onmousedown = function(e) {
+                    e.preventDefault(); bringToFront(win);
+                    document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = 'none');
+                    let startWidth = win.offsetWidth; let startHeight = win.offsetHeight;
+                    let startX = e.clientX; let startY = e.clientY;
+                    
+                    document.addEventListener('mousemove', onMouseMove);
+                    function onMouseMove(e) {
+                        const w = startWidth + (e.clientX - startX); const h = startHeight + (e.clientY - startY);
+                        if (w > 320) win.style.width = w + 'px'; if (h > 220) win.style.height = h + 'px';
+                    }
+                    
+                    document.onmouseup = function() {
+                        document.removeEventListener('mousemove', onMouseMove);
+                        document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = 'auto');
+                        document.onmouseup = null;
+                    };
+                };
+            }
+            win.onmousedown = () => bringToFront(win);
+        }
+
+        document.querySelectorAll('.window').forEach(win => registerWindowEvents(win));
+        function toggleStart() { document.getElementById('start-menu').classList.toggle('open'); }
+        document.getElementById('desktop').addEventListener('click', (e) => {
+            if(e.target === document.getElementById('desktop')) document.getElementById('start-menu').classList.remove('open');
+        });
+
+        function setTheme(t) { 
+            document.body.setAttribute('data-theme', t); 
+            localStorage.setItem('win11-theme', t); 
+            buildStarfield(); 
+        }
+
+        function authenticateAdmin() {
+            const token = document.getElementById('admin-auth-pass').value;
+            if(token === "admin123") {
+                document.getElementById('user-badge').style.background = "var(--accent-color)";
+                document.getElementById('user-badge').innerText = "Administrator Mode";
+                document.getElementById('admin-launcher-icon').style.display = 'flex';
+                alert("Security handshake verified. Cloud dashboard panel unlocked.");
+                closeWindow('settings');
+                openWindow('cloudmanager');
+            } else {
+                alert("Incorrect administrative authorization key.");
+            }
+        }
+
+        function generateConfigSnippetForGitHub() {
+            const name = document.getElementById('panel-app-name').value.trim();
+            const url = document.getElementById('panel-app-url').value.trim();
+            const icon = document.getElementById('panel-app-icon').value.trim();
+
+            if (!name || !url) { alert("Please complete form structures before compilation."); return; }
+
+            let targetUrl = url;
+            if (!/^https?:\/\//i.test(targetUrl)) targetUrl = 'https://' + targetUrl;
+
+            const cleanID = "cloud_" + name.toLowerCase().replace(/[^a-z0-9]/g, "_") + "_" + Math.floor(Math.random() * 90);
+            const structuralOutputBlock = `    {\n        id: "${cleanID}",\n        title: "${name}",\n        url: "${targetUrl}",\n        icon: "${icon}"\n    },`;
+
+            document.getElementById('output-config-log').value = "SUCCESS! Copy the code snippet below and paste it directly into your PREINSTALLED_CLOUD_APPS array inside your HTML code:\n\n" + structuralOutputBlock;
+        }
+
+        function navigateBrowserFrame() {
+            let address = document.getElementById('browser-url-bar-field').value.trim();
+            if(!address) return;
+            
+            if (address.indexOf('.') === -1 || address.indexOf(' ') >= 0) {
+                address = "https://www.google.com/search?q=" + encodeURIComponent(address) + "&igu=1";
+            } else {
+                if (!/^https?:\/\//i.test(address)) address = 'https://' + address;
+                if(address.includes("youtube.com") && !address.includes("embed/")) {
+                    address = "https://www.youtube.com/embed/";
+                }
+            }
+            document.getElementById('browser-url-bar-field').value = address;
+            document.getElementById('native-browser-viewport').src = address;
+        }
+
+        // =========================================================================
+        // GLOBAL APPS SHORTCUT DEPLOYMENT INTERACTION ENGINE
+        // =========================================================================
+        function deploySystemAppShortcut(app) {
+            try {
+                let displayUrl = app.url;
+                
+                if(displayUrl.includes("youtube.com") && !displayUrl.includes("embed/")) {
+                    if(displayUrl.includes("watch?v=")) {
+                        const vidId = displayUrl.split("watch?v=")[1].split("&")[0];
+                        displayUrl = `https://www.youtube.com/embed/${vidId}`;
+                    } else {
+                        displayUrl = "https://www.youtube.com/embed/";
+                    }
+                }
+
+                if(displayUrl.includes("whatsapp.com") && !displayUrl.includes("web.")) {
+                    displayUrl = "https://web.whatsapp.com/";
+                }
+
+                const cleanHostname = new URL(displayUrl).hostname;
+                // Use custom icon if provided, otherwise crawl domain favicon
+                const iconResolutionUrl = app.icon ? app.icon : `https://www.google.com/s2/favicons?domain=${cleanHostname}&sz=64`;
+                
+                const generateSmartIconMarkup = () => {
+                    return `<img src="${iconResolutionUrl}" onerror="this.onerror=null; this.outerHTML='<div class=\\'app-avatar\\' style=\\'background:linear-gradient(135deg, #7a3ef2 0%, #29b6f6 100%); width:100%; height:100%; font-size:12px;\\'>${app.title.substring(0,2).toUpperCase()}</div>';">`;
+                };
+
+                document.getElementById('sys-desktop-icons').insertAdjacentHTML('beforeend', 
+                    `<div class="desktop-icon" onclick="openWindow('${app.id}')"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center;">${generateSmartIconMarkup()}</div><span>${app.title}</span></div>`
+                );
+
+                document.getElementById('start-apps-grid').insertAdjacentHTML('beforeend', 
+                    `<div class="app-item" onclick="toggleStart(); openWindow('${app.id}');"><div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center;">${generateSmartIconMarkup()}</div><span>${app.title}</span></div>`
+                );
+
+                document.getElementById('taskbar-shelf').insertAdjacentHTML('beforeend', 
+                    `<div class="taskbar-icon" title="${app.title}" onclick="openWindow('${app.id}')"><div style="width:26px; height:26px; display:flex; align-items:center; justify-content:center;">${generateSmartIconMarkup()}</div></div>`
+                );
+
+                const systemWindowShell = document.createElement('div');
+                systemWindowShell.id = `win-${app.id}`;
+                systemWindowShell.className = "window";
+                systemWindowShell.style.cssText = "top:15%; left:20%; width:750px; height:500px;";
+                systemWindowShell.innerHTML = `
+                    <div class="window-header">
+                        <span>${app.title}</span>
+                        <div class="window-controls">
+                            <button class="control-btn btn-close" onclick="closeWindow('${app.id}')"></button>
+                        </div>
+                    </div>
+                    <div class="window-content" style="background:#fff;">
+                        <iframe src="${displayUrl}" sandbox="allow-scripts allow-modals allow-downloads allow-forms allow-same-origin"></iframe>
+                    </div>
+                    <div class="resize-handle"></div>
+                `;
+                document.getElementById('custom-windows-container').appendChild(systemWindowShell);
+                registerWindowEvents(systemWindowShell);
+            } catch (e) {
+                console.error("Link shortcut parsing runtime error structural deployment skip:", app.url, e);
+            }
+        }
+
+        function bootstrapOS() {
+            if(localStorage.getItem('win11-theme')) setTheme(localStorage.getItem('win11-theme'));
+            PREINSTALLED_CLOUD_APPS.forEach(app => deploySystemAppShortcut(app));
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('date').innerText = now.toLocaleDateString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+        bootstrapOS();
+    </script>
 </body>
 </html>
